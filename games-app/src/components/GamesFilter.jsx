@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-export default function GamesFilter({ genres, publishers, onFilterChange }) {
+export default function GamesFilter({ genres, platforms, onFilterChange }) {
     const [title, setTitle] = useState("");
     const [genre, setGenre] = useState("");
-    const [publisher, setPublisher] = useState("");
+    const [platform, setPlatform] = useState("");
 
     const titleRef = useRef();
     const genreRef = useRef();
-    const publisherRef = useRef();
+    const platformRef = useRef();
 
     function handleTitleSearch(e) {
         const titleText = e.target.value;
@@ -20,70 +20,73 @@ export default function GamesFilter({ genres, publishers, onFilterChange }) {
         applyFilters();
     }
 
-    function handlePublisherChange(e) {
-        const selectedPublisher = e.target.value;
-        setGenre(selectedPublisher);
+    function handlePlatformChange(e) {
+        const selectedPlatform = e.target.value;
+        setGenre(selectedPlatform);
         applyFilters();
     }
 
     function applyFilters() {
         let title = titleRef.current.value;
         let genre = genreRef.current.value
-        let publisher = publisherRef.current.value;
-        onFilterChange(title, genre, publisher);
-        //console.log('applyFilters', titleRef.current.value, genreRef.current.value);
+        let platform = platformRef.current.value;
+        onFilterChange(title, genre, platform);
     }
 
     function resetFilterControls() {
         setTitle("");
         setGenre("");
-        setPublisher("");
+        setPlatform("");
         titleRef.current.value = "";
         genreRef.current.value = "";
-        publisherRef.current.value = "";
+        platformRef.current.value = "";
     }
 
-    function removeFilters() {
+    function resetFilters() {
         resetFilterControls();
         applyFilters();
     }
 
-    let genreOptionsJsx = genres.map(genre => {
-        return (
-            <option value={genre}>{genre}</option>
-        )
-    });
-    genreOptionsJsx.unshift(<option value="">All Genres</option>)
-
-    let publisherOptionsJsx = publishers.map(publisher => {
-        return (
-            <option value={publisher}>{publisher}</option>
-        )
-    });
-    publisherOptionsJsx.unshift(<option value="">All Publishers</option>)
-
     return (
         <>
-            <div>
+            <div className="search-bar">
+                {/*Search input box*/}
                 <input type="text" ref={titleRef}
                     className="games-search-box"
                     value={title}
                     onChange={(e) => { handleTitleSearch(e) }}
                     placeholder="Enter a title">
                 </input>
-                <button onClick={() => { removeFilters() }}>Remove Filters</button>
+
+                {/*Reset filters button*/}
+                <button
+                    className="btn btn-secondary"
+                    style={{ marginLeft: "20px" }}
+                    onClick={() => { resetFilters() }}
+                >Reset Filters</button>
             </div>
-            <div>
-                Filters:
+
+            <div className="filters-bar">
+                <span>Filters:</span>
+
+                {/*Genre dropdown list*/}
                 <select ref={genreRef}
                     onChange={(e) => { handleGenreChange(e) }}
+                    className="genre-dropdown"
                 >
-                    {genreOptionsJsx}
-                </select> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <select ref={publisherRef}
-                    onChange={(e) => { handlePublisherChange(e) }}
+                    <option value="">All Genres</option>
+                    {genres.map(genre => (<option value={genre}>{genre}</option>))}
+                </select>
+
+                <span style={{ marginLeft: "40px" }}></span>
+
+                {/*Platform dropdown list*/}
+                <select ref={platformRef} 
+                    onChange={(e) => { handlePlatformChange(e) }}
+                    className="platform-dropdown"
                 >
-                    {publisherOptionsJsx}
+                    <option value="">All platforms</option>
+                    {platforms.map(platform => (<option value={platform}>{platform}</option>))}
                 </select>
             </div>
         </>
